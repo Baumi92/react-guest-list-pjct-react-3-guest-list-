@@ -13,7 +13,7 @@ export default function ExampleControlledComponentsCheckboxes() {
       }}
     >
       <label>
-        Cooke policy accepted?
+        Attending
         {/* // 2.  use the current value of the state as the checked property of the input*/}
         <input
           checked={isCookiePolicyAccepted}
