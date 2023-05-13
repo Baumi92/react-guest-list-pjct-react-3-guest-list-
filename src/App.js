@@ -1,7 +1,7 @@
 import './App.css';
 import ExampleArrayOfObjectsInReact from './Arrayofobjectsinreact';
 import ExampleControlledComponentsCheckboxes from './Checkbox';
-import ExampleFetchingInitialState from './Fetchinitialstate';
+import ExampleFetchingInitialState from './Fetchdata';
 
 function App() {
   return (
