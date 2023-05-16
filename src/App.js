@@ -5,7 +5,7 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const baseUrl = 'https://localhost:4000';
+  const baseUrl = 'http://localhost:4000';
 
   const loadGuests = async () => {
     try {
@@ -74,16 +74,16 @@ const App = () => {
     }
   };
 
-  const handleFirstNameChange = (e) => {
-    setFirstName(e.target.value);
+  const handleFirstNameChange = (event) => {
+    setFirstName(event.target.value);
   };
 
-  const handleLastNameChange = (e) => {
-    setLastName(e.target.value);
+  const handleLastNameChange = (event) => {
+    setLastName(event.target.value);
   };
 
-  const handleKeyPress = async (e) => {
-    if (e.key === 'Enter') {
+  const handleKeyPress = async (event) => {
+    if (event.key === 'Enter') {
       await addGuest();
     }
   };
@@ -99,7 +99,6 @@ const App = () => {
           <div>
             <label htmlFor="firstName">First name</label>
             <input
-              type="text"
               id="firstName"
               value={firstName}
               onChange={handleFirstNameChange}
@@ -108,33 +107,25 @@ const App = () => {
           <div>
             <label htmlFor="lastName">Last name</label>
             <input
-              type="text"
               id="lastName"
               value={lastName}
               onChange={handleLastNameChange}
               onKeyPress={handleKeyPress}
             />
           </div>
-
           {guests.map((guest) => (
-            <div key={guest.id} data-test-id="guest">
+            <div key={`guest-${guest.id}`} data-test-id="guest">
               <span>
                 {guest.firstName} {guest.lastName}
               </span>
-              <button
-                onClick={() => deleteGuest(guest.id)}
-                aria-label={`Remove ${guest.firstName} ${guest.lastName}`}
-              >
-                Remove
-              </button>
+              <button onClick={() => deleteGuest(guest.id)}>Remove</button>
               <label>
                 <input
                   type="checkbox"
                   checked={guest.attending}
                   onChange={() => toggleAttending(guest.id)}
-                  aria-label={`${guest.firstName} ${guest.lastName} attending status`}
                 />
-                Attending
+                {guest.attending ? 'Attending' : 'Not Attending'}
               </label>
             </div>
           ))}
