@@ -1,138 +1,90 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
-const App = () => {
+function App() {
   const [guests, setGuests] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const baseUrl = 'http://localhost:4000';
 
-  const loadGuests = async () => {
-    try {
-      const response = await fetch(`${baseUrl}/guests`);
-      const allGuests = await response.json();
-      setGuests(allGuests);
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
+  const addGuest = () => {
+    if (!firstName.trim() || !lastName.trim()) {
+      return; // Prevent adding a guest with empty fields
     }
+
+    const newGuest = {
+      id: Date.now(), // Generate a unique ID
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
+      attending: false,
+    };
+
+    setGuests([...guests, newGuest]);
+    setFirstName('');
+    setLastName('');
   };
 
-  useEffect(() => {
-    loadGuests().catch((error) => {
-      console.log(error);
-    });
-  }, []);
-
-  const addGuest = async () => {
-    if (firstName && lastName) {
-      try {
-        const response = await fetch(`${baseUrl}/guests`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ firstName, lastName }),
-        });
-        const createdGuest = await response.json();
-        setGuests([...guests, createdGuest]);
-        setFirstName('');
-        setLastName('');
-      } catch (error) {
-        console.log(error);
-      }
-    }
+  const deleteGuest = (id) => {
+    setGuests(guests.filter((guest) => guest.id !== id));
   };
 
-  const deleteGuest = async (guestId) => {
-    try {
-      await fetch(`${baseUrl}/guests/${guestId}`, { method: 'DELETE' });
-      setGuests(guests.filter((guest) => guest.id !== guestId));
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const toggleAttending = async (guestId) => {
-    try {
-      const updatedGuests = guests.map((guest) => {
-        if (guest.id === guestId) {
-          return {
-            ...guest,
-            attending: !guest.attending,
-          };
-        }
-        return guest;
-      });
-
-      await fetch(`${baseUrl}/guests/${guestId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ attending: !guestId.attending }),
-      });
-      setGuests(updatedGuests);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleFirstNameChange = (event) => {
-    setFirstName(event.target.value);
-  };
-
-  const handleLastNameChange = (event) => {
-    setLastName(event.target.value);
-  };
-
-  const handleKeyPress = async (event) => {
-    if (event.key === 'Enter') {
-      await addGuest();
-    }
+  const toggleAttending = (id) => {
+    setGuests(
+      guests.map((guest) =>
+        guest.id === id ? { ...guest, attending: !guest.attending } : guest,
+      ),
+    );
   };
 
   return (
-    <div className="App">
+    <div className=".App">
       <h1>Guest List</h1>
-
-      {loading ? (
-        <div>Loading...</div>
-      ) : (
-        <div>
-          <div>
-            <label htmlFor="firstName">First name</label>
+      <div>
+        <label htmlFor="firstName">First name:</label>
+        <input
+          id="firstName"
+          value={firstName}
+          onChange={(event) => setFirstName(event.target.value)}
+        />
+      </div>
+      <div>
+        <label htmlFor="lastName">Last name:</label>
+        <input
+          id="lastName"
+          value={lastName}
+          onChange={(event) => setLastName(event.target.value)}
+          onKeyPress={(event) => {
+            if (event.key === 'Enter') {
+              addGuest();
+            }
+          }}
+        />
+      </div>
+      <button onClick={addGuest}>Add Guest</button>
+      <hr />
+      <h2>Guests:</h2>
+      {guests.map((guest) => (
+        <div key={`guest-${guest.id}`} data-test-id="guest">
+          <span>
+            {guest.firstName} {guest.lastName}
+          </span>
+          <button
+            aria-label={`Remove ${guest.firstName} ${guest.lastName}`}
+            onClick={() => deleteGuest(guest.id)}
+          >
+            Remove
+          </button>
+          <label>
+            Attending:{' '}
             <input
-              id="firstName"
-              value={firstName}
-              onChange={handleFirstNameChange}
+              type="checkbox"
+              aria-label={`${guest.firstName} ${guest.lastName} attending status`}
+              checked={guest.attending}
+              onChange={() => toggleAttending(guest.id)}
             />
-          </div>
-          <div>
-            <label htmlFor="lastName">Last name</label>
-            <input
-              id="lastName"
-              value={lastName}
-              onChange={handleLastNameChange}
-              onKeyPress={handleKeyPress}
-            />
-          </div>
-          {guests.map((guest) => (
-            <div key={`guest-${guest.id}`} data-test-id="guest">
-              <span>
-                {guest.firstName} {guest.lastName}
-              </span>
-              <button onClick={() => deleteGuest(guest.id)}>Remove</button>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={guest.attending}
-                  onChange={() => toggleAttending(guest.id)}
-                />
-                {guest.attending ? 'Attending' : 'Not Attending'}
-              </label>
-            </div>
-          ))}
+          </label>
         </div>
-      )}
+      ))}
     </div>
   );
-};
+}
 
 export default App;
