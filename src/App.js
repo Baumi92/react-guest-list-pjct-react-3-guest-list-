@@ -23,11 +23,11 @@ function App() {
     setFirstName('');
     setLastName('');
   };
-
+  // delete guest
   const deleteGuest = (id) => {
     setGuests(guests.filter((guest) => guest.id !== id));
   };
-
+  // map for attending status
   const toggleAttending = (id) => {
     setGuests(
       guests.map((guest) =>
@@ -35,7 +35,7 @@ function App() {
       ),
     );
   };
-
+  // Button,on Click events
   return (
     <div className={styles.container}>
       <h1>Guest List</h1>
