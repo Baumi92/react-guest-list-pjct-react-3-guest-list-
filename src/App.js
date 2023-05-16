@@ -1,4 +1,6 @@
+import './App.css';
 import React, { useState } from 'react';
+import styles from './App.css';
 
 function App() {
   const [guests, setGuests] = useState([]);
@@ -35,7 +37,7 @@ function App() {
   };
 
   return (
-    <div className=".App">
+    <div className={styles.container}>
       <h1>Guest List</h1>
       <div>
         <label htmlFor="firstName">First name:</label>
